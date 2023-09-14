@@ -1,68 +1,100 @@
 <!DOCTYPE html>
-<html>
+<html lang="en">
 <head>
-    <title>API Test</title>
+    <meta charset="UTF-8">
+    <title>Create Person</title>
+    <style>
+        /* Styles for the form container */
+        .form-container {
+            width: 300px;
+            margin: 0 auto;
+            padding: 20px;
+            border: 1px solid #ccc;
+            border-radius: 5px;
+            background-color: #f8f8f8;
+        }
+
+        /* Style for form labels */
+        label {
+            font-weight: bold;
+            display: block;
+            margin-bottom: 5px;
+        }
+
+        /* Style for input fields */
+        input[type="text"],
+        input[type="number"],
+        input[type="email"] {
+            width: 100%;
+            padding: 8px;
+            margin-bottom: 10px;
+            border: 1px solid #ccc;
+            border-radius: 3px;
+            transition: border-color 0.3s ease-in-out;
+        }
+
+        /* Hover effect for input fields */
+        input[type="text"]:hover,
+        input[type="number"]:hover,
+        input[type="email"]:hover {
+            border-color: #007bff;
+        }
+
+        /* Animation for button */
+        button {
+            background-color: #007bff;
+            color: #fff;
+            border: none;
+            padding: 10px 20px;
+            border-radius: 5px;
+            cursor: pointer;
+            transition: background-color 0.3s ease-in-out;
+        }
+
+        /* Hover effect for button */
+        button:hover {
+            background-color: #0056b3;
+        }
+    </style>
 </head>
 <body>
-    <h1>API Test</h1>
-    <button onclick="createPerson()">Create Person</button>
-    <button onclick="readPerson('user_id')">Read Person</button>
-    <button onclick="updatePerson('user_id')">Update Person</button>
-    <button onclick="deletePerson('user_id')">Delete Person</button>
-    
+    <div class="form-container">
+        <form id="personForm">
+            <label for="name">Name:</label>
+            <input type="text" id="name" name="name" required><br><br>
+
+            <label for="age">Age:</label>
+            <input type="number" id="age" name="age" required><br><br>
+
+            <label for="email">Email:</label>
+            <input type="email" id="email" name="email" required><br><br>
+
+            <button type="button" onclick="createPerson()">Create Person</button>
+        </form>
+    </div>
+
     <script>
         function createPerson() {
-            // Make a POST request to create a person
+            const name = document.getElementById("name").value;
+            const age = document.getElementById("age").value;
+            const email = document.getElementById("email").value;
+
             fetch('http://localhost:3000/api', {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json',
                 },
-                body: JSON.stringify({
-                    name: 'John',
-                    age: 30,
-                    email: 'john@example.com',
-                }),
+                body: JSON.stringify({ name, age, email }),
             })
             .then(response => response.json())
-            .then(data => console.log(data))
-            .catch(error => console.error('Error:', error));
-        }
-
-        function readPerson(userId) {
-            // Make a GET request to read a person
-            fetch(`http://localhost:3000/api/${userId}`)
-            .then(response => response.json())
-            .then(data => console.log(data))
-            .catch(error => console.error('Error:', error));
-        }
-
-        function updatePerson(userId) {
-            // Make a PUT request to update a person
-            fetch(`http://localhost:3000/api/${userId}`, {
-                method: 'PUT',
-                headers: {
-                    'Content-Type': 'application/json',
-                },
-                body: JSON.stringify({
-                    name: 'Updated John',
-                    age: 31,
-                    email: 'updatedjohn@example.com',
-                }),
+            .then(data => {
+              console.log(data)
+              age =""
+            name =""
+            email = ""
             })
-            .then(response => response.json())
-            .then(data => console.log(data))
             .catch(error => console.error('Error:', error));
-        }
-
-        function deletePerson(userId) {
-            // Make a DELETE request to delete a person
-            fetch(`http://localhost:3000/api/${userId}`, {
-                method: 'DELETE',
-            })
-            .then(response => response.json())
-            .then(data => console.log(data))
-            .catch(error => console.error('Error:', error));
+            
         }
     </script>
 </body>
