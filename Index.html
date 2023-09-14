@@ -1,0 +1,69 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>API Test</title>
+</head>
+<body>
+    <h1>API Test</h1>
+    <button onclick="createPerson()">Create Person</button>
+    <button onclick="readPerson('user_id')">Read Person</button>
+    <button onclick="updatePerson('user_id')">Update Person</button>
+    <button onclick="deletePerson('user_id')">Delete Person</button>
+    
+    <script>
+        function createPerson() {
+            // Make a POST request to create a person
+            fetch('http://localhost:3000/api', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify({
+                    name: 'John',
+                    age: 30,
+                    email: 'john@example.com',
+                }),
+            })
+            .then(response => response.json())
+            .then(data => console.log(data))
+            .catch(error => console.error('Error:', error));
+        }
+
+        function readPerson(userId) {
+            // Make a GET request to read a person
+            fetch(`http://localhost:3000/api/${userId}`)
+            .then(response => response.json())
+            .then(data => console.log(data))
+            .catch(error => console.error('Error:', error));
+        }
+
+        function updatePerson(userId) {
+            // Make a PUT request to update a person
+            fetch(`http://localhost:3000/api/${userId}`, {
+                method: 'PUT',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify({
+                    name: 'Updated John',
+                    age: 31,
+                    email: 'updatedjohn@example.com',
+                }),
+            })
+            .then(response => response.json())
+            .then(data => console.log(data))
+            .catch(error => console.error('Error:', error));
+        }
+
+        function deletePerson(userId) {
+            // Make a DELETE request to delete a person
+            fetch(`http://localhost:3000/api/${userId}`, {
+                method: 'DELETE',
+            })
+            .then(response => response.json())
+            .then(data => console.log(data))
+            .catch(error => console.error('Error:', error));
+        }
+    </script>
+</body>
+</html>
