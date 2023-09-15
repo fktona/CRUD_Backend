@@ -4,7 +4,7 @@ const admin = require('firebase-admin');
 const serviceAccount = require('./secret.json')
 require('dotenv').config()
 
-console.log(`DB_LINK: ${process.env.DB_LINK}`);
+
 
 
 
