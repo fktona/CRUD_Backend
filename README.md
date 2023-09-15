@@ -1,0 +1,41 @@
+###UML DIAGRAM
+```shell
++-------------------+       +-----------------------+
+|     Express App  |       |    Firebase Admin    |
++-------------------+       +-----------------------+
+| - app             |       | - admin               |
+|                   |       | - databaseURL         |
+| + POST /api       |       | - credential          |
+| + GET /api/:userId|       |                       |
+| + PUT /api/:userId|       |                       |
+| + DELETE /api/:userId|    |                       |
+| + POST /api/byname|       +-----------------------+
+| + GET /api/byname/:userName|
+| + GET /api/allusers|     
+|                   |
++-------------------+
+         |
+         |
+         |
++-------------------+
+|      Firestore    |
++-------------------+
+|                   |
+| + collection('people')|
+|                   |
++-------------------+
+         |
+         |
+         |
++-------------------+
+|      Person       |
++-------------------+
+| - name            |
+| - age             |
+| - email           |
+| + add()           |
+| + get()           |
+| + update()        |
+| + delete()        |
+| + getAll()        |
++-------------------+
