@@ -10,7 +10,7 @@ document.addEventListener('DOMContentLoaded', () => {
     // Function to fetch and display users
     async function fetchUsers() {
         try {
-            const response = await fetch('http://localhost:3000/api');
+            const response = await fetch('https://crud-server-d24p.onrender.com/api');
             const data = await response.json();
 
             userList.innerHTML = '';
@@ -46,7 +46,7 @@ document.addEventListener('DOMContentLoaded', () => {
         const email = emailInput.value;
 
         try {
-            const response = await fetch('http://localhost:3000/api', {
+            const response = await fetch('https://crud-server-d24p.onrender.com/api', {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json',
@@ -89,7 +89,7 @@ document.addEventListener('DOMContentLoaded', () => {
     // Function to list all users
     async function listAllUsers() {
         try {
-            const response = await fetch('http://localhost:3000/api/allusers');
+            const response = await fetch('https://crud-server-d24p.onrender.com/api/allusers');
             const data = await response.json();
 
             userList.innerHTML = '';
@@ -118,7 +118,7 @@ document.addEventListener('DOMContentLoaded', () => {
     // Function to search users by name
     searchInput.addEventListener('input', async () => {
         const searchName = searchInput.value;
-        const response = await fetch(`http://localhost:3000/api/byname/${searchName}`);
+        const response = await fetch(`https://crud-server-d24p.onrender.com/api/byname/${searchName}`);
         const data = await response.json();
 
         userList.innerHTML = '';

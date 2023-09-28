@@ -32,11 +32,54 @@ app.post('/api', async (req, res) => {
     res.status(500).json({ error: 'Failed to create a person' });
   }
 });
+app.post('/api/video', async (req, res) => {
+  try {
+    const { recordedBlob} = req.body; 
+    
+    const personRef = admin.firestore().collection('videoLink');
+    const docRef = await personRef.add({ videoLink });
+    res.json({ id: docRef.id });
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({ error: 'Failed to create a person' });
+  }
+});
 
 
 
 
 // geting list of all the users present 
+app.get('/api/videolink/links', async (req, res) => {
+  try {
+    // Reference the "videoLink" collection in Firestore
+    const videoLinkRef = admin.firestore().collection('videoLink');
+
+    // Use the get method to retrieve all documents in the collection
+    const snapshot = await videoLinkRef.get();
+
+    // Initialize an array to store the video link data
+    const videoLinks = [];
+
+    // Iterate over the documents in the snapshot
+    snapshot.forEach((doc) => {
+      // Extract the data from each document
+      const videoLinkData = doc.data();
+
+      // Push an object containing the document ID and video link data to the array
+      videoLinks.push({ id: doc.id, ...videoLinkData });
+    });
+
+    // Send the array of video link data as a JSON response
+    res.json(videoLinks);
+  } catch (error) {
+    // Handle any errors that occur during the process
+    console.error(error);
+    res.status(500).json({ error: 'Failed to fetch video links' });
+  }
+});
+
+
+
 app.get('/api/allusers', async (req, res) => {
   try {
     const personRef = admin.firestore().collection('people');
