@@ -35,12 +35,12 @@ app.post('/api', async (req, res) => {
 });
 app.post('/api/video', async (req, res) => {
   try {
-    const videoData = await req.buffer();
+    const formData = await req.buffer();
 
     // Save the video data to a file
     const videoFileName = `${uuid()}.webm`;
     const videoFilePath = path.join(__dirname, 'uploads', videoFileName);
-    await fs.promises.writeFile(videoFilePath, videoData);
+    await fs.promises.writeFile(videoFilePath, formData);
 
     // Store the video file path in Firestore
     const videoLinkRef = admin.firestore().collection('videoLink');
