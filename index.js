@@ -1,8 +1,12 @@
 const express = require('express');
 const cors = require('cors');
 const admin = require('firebase-admin');
-const { uuid } = require('uuid');
 const serviceAccount = require('./secret.json')
+const multer = require('multer');
+const fs = require('fs').promises;
+const path = require('path');
+const { v4: uuid } = require('uuid');
+
 require('dotenv').config()
 
 
@@ -18,7 +22,9 @@ const app = express();
 app.use(express.json());
 app.use(cors())
 
-
+// Set up multer storage and limits
+const storage = multer.memoryStorage(); // Store file in memory, you can change this to a destination on disk
+const upload = multer({ storage: storage, limits: { fileSize: 1024 * 1024 * 20 } }); // 10MB file size limit
 
 
 app.post('/api', async (req, res) => {
@@ -33,16 +39,23 @@ app.post('/api', async (req, res) => {
     res.status(500).json({ error: 'Failed to create a person' });
   }
 });
-app.post('/api/video', async (req, res) => {
+
+
+
+
+// Define your route to handle file uploads
+app.post('/api/video', upload.single('video'), async (req, res) => {
   try {
-    const formData = await req.buffer();
+    const videoData = req.file.buffer;
 
     // Save the video data to a file
     const videoFileName = `${uuid()}.webm`;
     const videoFilePath = path.join(__dirname, 'uploads', videoFileName);
-    await fs.promises.writeFile(videoFilePath, formData);
+    await fs.writeFile(videoFilePath, videoData);
 
     // Store the video file path in Firestore
+    // (Assuming you have Firestore properly initialized)
+
     const videoLinkRef = admin.firestore().collection('videoLink');
     const docRef = await videoLinkRef.add({ videoFilePath });
 
@@ -52,7 +65,6 @@ app.post('/api/video', async (req, res) => {
     res.status(500).json({ error: 'Failed to upload video' });
   }
 });
-
 
 
 
