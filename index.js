@@ -22,9 +22,23 @@ const app = express();
 app.use(express.json());
 app.use(cors())
 
-// Set up multer storage and limits
-const storage = multer.memoryStorage(); // Store file in memory, you can change this to a destination on disk
-const upload = multer({ storage: storage, limits: { fileSize: 1024 * 1024 * 20 } }); // 10MB file size limit
+// Set up multer storage and limitsconst storage = multer.memoryStorage(); // Store file in memory, you can change this to a destination on disk
+const upload = multer({
+  storage: storage,
+  limits: {
+    fileSize: 1024 * 1024 * 20, // 10MB file size limit
+  },
+  fileFilter: (req, file, cb) => {
+    // Check if the file is a valid video file
+    if (!file.mimetype.includes('video/')) {
+      cb(new Error('Invalid file type'), false);
+      return;
+    }
+
+    // Allow the file to be uploaded
+    cb(null, true);
+  },
+});
 
 
 app.post('/api', async (req, res) => {
@@ -46,20 +60,29 @@ app.post('/api', async (req, res) => {
 // Define your route to handle file uploads
 app.post('/api/video', upload.single('video'), async (req, res) => {
   try {
-    const videoData = req.file.buffer;
+    // Check if the file is valid
+    if (req.file) {
+      // The file is valid
+      const videoData = req.file.buffer;
 
-    // Save the video data to a file
-    const videoFileName = `${uuid()}.webm`;
-    const videoFilePath = path.join(__dirname, 'uploads', videoFileName);
-    await fs.writeFile(videoFilePath, videoData);
+      // Save the video data to Firebase Storage
+      const firebaseStorage = admin.storage();
+      const videoStorageRef = firebaseStorage.ref(`uploads/${uuid()}.webm`);
+      await videoStorageRef.put(videoData);
 
-    // Store the video file path in Firestore
-    // (Assuming you have Firestore properly initialized)
+      // Get the public URL of the video file
+      const videoUrl = await videoStorageRef.getDownloadURL();
 
-    const videoLinkRef = admin.firestore().collection('videoLink');
-    const docRef = await videoLinkRef.add({ videoFilePath });
+      // Store the video URL in Firestore
+      const videoLinkRef = admin.firestore().collection('videoLink');
+      const docRef = await videoLinkRef.add({ videoUrl });
 
-    res.json({ id: docRef.id });
+      res.json({ id: docRef.id });
+    } else {
+      console.log("invalid")
+      // The file is invalid or missing
+      res.status(400).json({ error: 'Invalid or missing file' });
+    }
   } catch (error) {
     console.error(error);
     res.status(500).json({ error: 'Failed to upload video' });
