@@ -6,7 +6,7 @@ const multer = require('multer');
 const fs = require('fs').promises;
 const path = require('path');
 const { v4: uuid } = require('uuid');
-import firebase from 'firebase';
+
 
 require('dotenv').config()
 
@@ -61,29 +61,20 @@ app.post('/api', async (req, res) => {
 // Define your route to handle file uploads
 app.post('/api/video', upload.single('video'), async (req, res) => {
   try {
-    // Check if the file is valid
-    if (req.file) {
-      // The file is valid
-      const videoData = req.file.buffer;
+    const videoData = req.file.buffer;
 
-      // Save the video data to Firebase Storage
-      const firebaseStorage = admin.storage();
-      const videoStorageRef = firebaseStorage.ref(`uploads/${uuid()}.webm`);
-      await videoStorageRef.put(videoData);
+    // Save the video data to a file
+    const videoFileName = `${uuid()}.webm`;
+    const videoFilePath = path.join(__dirname, 'uploads', videoFileName);
+    await fs.writeFile(videoFilePath, videoData);
 
-      // Get the public URL of the video file
-      const videoUrl = await videoStorageRef.getDownloadURL();
+    // Store the video file path in Firestore
+    // (Assuming you have Firestore properly initialized)
 
-      // Store the video URL in Firestore
-      const videoLinkRef = admin.firestore().collection('videoLink');
-      const docRef = await videoLinkRef.add({ videoUrl });
+    const videoLinkRef = admin.firestore().collection('videoLink');
+    const docRef = await videoLinkRef.add({ videoFilePath });
 
-      res.json({ id: docRef.id });
-    } else {
-      console.log("invalid")
-      // The file is invalid or missing
-      res.status(400).json({ error: 'Invalid or missing file' });
-    }
+    res.json({ id: docRef.id });
   } catch (error) {
     console.error(error);
     res.status(500).json({ error: 'Failed to upload video' });
