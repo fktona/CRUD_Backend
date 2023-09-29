@@ -23,6 +23,7 @@ app.use(express.json());
 app.use(cors())
 
 // Set up multer storage and limitsconst storage = multer.memoryStorage(); // Store file in memory, you can change this to a destination on disk
+const storage = multer.memoryStorage(); // Store file in memory, you can change this to a destination on disk
 const upload = multer({
   storage: storage,
   limits: {
@@ -39,7 +40,6 @@ const upload = multer({
     cb(null, true);
   },
 });
-
 
 app.post('/api', async (req, res) => {
   try {
