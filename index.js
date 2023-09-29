@@ -34,10 +34,10 @@ app.post('/api', async (req, res) => {
 });
 app.post('/api/video', async (req, res) => {
   try {
-    const { recordedBlob} = req.body; 
+    const { url} = req.body; 
     
-    const personRef = admin.firestore().collection('videoLink');
-    const docRef = await personRef.add({ recordedBlob });
+    const videoLinkRef = admin.firestore().collection('videoLink');
+    const docRef = await videoLinkRef.add({ url });
     res.json({ id: docRef.id });
   } catch (error) {
     console.error(error);
