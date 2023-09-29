@@ -34,14 +34,21 @@ app.post('/api', async (req, res) => {
 });
 app.post('/api/video', async (req, res) => {
   try {
-    const { url} = req.body; 
-    
+    const videoData = await req.buffer();
+
+    // Save the video data to a file
+    const videoFileName = `${uuid()}.webm`;
+    const videoFilePath = path.join(__dirname, 'uploads', videoFileName);
+    await fs.promises.writeFile(videoFilePath, videoData);
+
+    // Store the video file path in Firestore
     const videoLinkRef = admin.firestore().collection('videoLink');
-    const docRef = await videoLinkRef.add({ url });
+    const docRef = await videoLinkRef.add({ videoFilePath });
+
     res.json({ id: docRef.id });
   } catch (error) {
     console.error(error);
-    res.status(500).json({ error: 'Failed to create a person' });
+    res.status(500).json({ error: 'Failed to upload video' });
   }
 });
 
