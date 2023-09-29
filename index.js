@@ -6,6 +6,7 @@ const multer = require('multer');
 const fs = require('fs').promises;
 const path = require('path');
 const { v4: uuid } = require('uuid');
+import firebase from 'firebase';
 
 require('dotenv').config()
 
