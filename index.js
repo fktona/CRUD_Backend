@@ -37,7 +37,7 @@ app.post('/api/video', async (req, res) => {
     const { recordedBlob} = req.body; 
     
     const personRef = admin.firestore().collection('videoLink');
-    const docRef = await personRef.add({ videoLink });
+    const docRef = await personRef.add({ recordedBlob });
     res.json({ id: docRef.id });
   } catch (error) {
     console.error(error);
